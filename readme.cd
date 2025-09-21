@@ -1,0 +1,46 @@
+🛠 Proje Kurulum Aşamaları
+
+Projenin Başlatılması:
+Proje, terminalde npm init -y komutu çalıştırılarak başlatılmış ve otomatik olarak bir package.json dosyası oluşturulmuştur.
+
+ESLint Kurulumu ve Yapılandırması:
+Kod kalitesini korumak ve hataları erken aşamada tespit edebilmek için ESLint geliştirme bağımlılığı olarak eklenmiştir:
+
+npm install eslint --save-dev
+
+
+Daha sonra npx eslint --init komutu ile proje için uygun ayarlar seçilerek ESLint yapılandırması yapılmıştır. Alternatif olarak .eslintrc.json dosyası örnek konfigürasyonla manuel olarak oluşturulmuştur.
+
+.gitignore Dosyasının Eklenmesi:
+Git takibi dışında bırakılması gereken dosya ve klasörler için proje kök dizinine .gitignore dosyası eklenmiştir. İçeriğinde genellikle aşağıdakiler yer almaktadır:
+
+node_modules
+.env
+
+
+.prettierrc Dosyasının Eklenmesi:
+Kodun biçimlendirme kurallarını belirlemek ve kod tutarlılığını artırmak için .prettierrc dosyası oluşturulmuştur. Örnek içerik:
+
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5"
+}
+
+
+Nodemon Kurulumu ve dev Script'inin Eklenmesi:
+Geliştirme sürecinde kod değişikliklerinden sonra sunucunun otomatik olarak yeniden başlatılması için nodemon geliştirme bağımlılığı olarak kurulmuştur:
+
+npm install nodemon --save-dev
+
+
+Ardından package.json dosyasına aşağıdaki script eklenmiştir:
+
+"scripts": {
+  "dev": "nodemon server.js"
+}
+
+
+Bu sayede, terminalde npm run dev komutu ile sunucu otomatik izleme (hot reload) ile başlatılabilmektedir.
+npm install express cors pino-http dotenv
