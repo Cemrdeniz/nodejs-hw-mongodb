@@ -2,11 +2,35 @@ import createError from "http-errors";
 import * as contactsService from "../services/contacts.js";
 
 
-export const fetchContacts = async (req, res) => {
-  const contacts = await contactsService.getAllContacts();
-  res.json(contacts);
-};
+export const fetchContacts = async (req, res, next) => {
+  try {
+    const {
+      page = 1,
+      perPage = 10,
+      sortBy = "name",
+      sortOrder = "asc",
+      type,
+      isFavourite
+    } = req.query;
 
+    const result = await contactsService.getAllContactsPaginated({
+      page: parseInt(page),
+      perPage: parseInt(perPage),
+      sortBy,
+      sortOrder,
+      type,
+      isFavourite
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "Successfully found contacts!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const fetchContactById = async (req, res) => {
   const { contactId } = req.params;
@@ -84,3 +108,4 @@ export const deleteContact = async (req, res, next) => {
     next(error);
   }
 };
+

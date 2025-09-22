@@ -49,3 +49,41 @@ export const deleteContact = async (contactId) => {
     throw new Error('Error deleting contact: ' + err.message);
   }
 };
+
+export const getAllContactsPaginated = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = "name",
+  sortOrder = "asc",
+  type,
+  isFavourite
+}) => {
+  try {
+    const filter = {};
+    if (type) filter.contactType = type;
+    if (isFavourite !== undefined) filter.isFavourite = isFavourite === 'true';
+
+    const totalItems = await Contact.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    const contacts = await Contact.find(filter)
+      .sort(sortOptions)
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return {
+      data: contacts,
+      page,
+      perPage,
+      totalItems,
+      totalPages,
+      hasPreviousPage: page > 1,
+      hasNextPage: page < totalPages,
+    };
+  } catch (err) {
+    throw new Error("Error fetching contacts: " + err.message);
+  }
+};
