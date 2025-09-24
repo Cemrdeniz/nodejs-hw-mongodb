@@ -7,17 +7,19 @@ import {
   patchContact,
   deleteContact,
 } from "../controllers/contacts.js";
-
+import authenticate from '../middlewares/authenticate.js';
 import { validateBody } from "../validators/validateBody.js";
 import { contactCreateSchema, contactUpdateSchema } from "../validators/contactSchemas.js";
 import { isValidId } from "../validators/isValidId.js";
 
 const router = express.Router();
 
-router.get("/", ctrlWrapper(fetchContacts));
-router.get("/:contactId", isValidId, ctrlWrapper(fetchContactById));
-router.post("/", validateBody(contactCreateSchema), ctrlWrapper(createContact));
-router.patch("/:contactId", isValidId, validateBody(contactUpdateSchema), ctrlWrapper(patchContact));
-router.delete("/:contactId", isValidId, ctrlWrapper(deleteContact));
+// <<< TÜM ROTALARI authenticate middleware'iyle koruyoruz >>>
+
+router.get("/", authenticate, ctrlWrapper(fetchContacts));
+router.get("/:contactId", authenticate, isValidId, ctrlWrapper(fetchContactById));
+router.post("/", authenticate, validateBody(contactCreateSchema), ctrlWrapper(createContact));
+router.patch("/:contactId", authenticate, isValidId, validateBody(contactUpdateSchema), ctrlWrapper(patchContact));
+router.delete("/:contactId", authenticate, isValidId, ctrlWrapper(deleteContact));
 
 export default router;

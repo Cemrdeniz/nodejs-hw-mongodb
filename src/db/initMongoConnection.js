@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { Contact } from './Contact.js'; // model
+import  Contact  from '../models/contact.js'; // model
 import mongoose from 'mongoose';
 import { env } from '../utils/env.js';
 

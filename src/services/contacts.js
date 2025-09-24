@@ -1,17 +1,54 @@
-import { Contact } from '../db/Contact.js';
+import Contact from '../models/contact.js';
 
-export const getAllContacts = async () => {
+
+export const getAllContactsPaginated = async ({
+  userId, 
+  page = 1,
+  perPage = 10,
+  sortBy = "name",
+  sortOrder = "asc",
+  type,
+  isFavourite
+}) => {
   try {
-    const contacts = await Contact.find();
-    return contacts;
+    const filter = { userId }; 
+
+    if (type) filter.contactType = type;
+    if (isFavourite !== undefined) {
+      filter.isFavourite = isFavourite === 'true';
+    }
+
+    const totalItems = await Contact.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    const contacts = await Contact.find(filter) 
+      .sort(sortOptions)
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return {
+      data: contacts,
+      page,
+      perPage,
+      totalItems,
+      totalPages,
+      hasPreviousPage: page > 1,
+      hasNextPage: page < totalPages,
+    };
   } catch (err) {
-    throw new Error('Error fetching contacts: ' + err.message);
+    throw new Error("Error fetching contacts: " + err.message);
   }
 };
 
-export const getContactById = async (contactId) => {
+
+
+
+export const getContactById = async (contactId, userId) => {
   try {
-    const contact = await Contact.findById(contactId);
+    const contact = await Contact.findOne({ _id: contactId, userId });
     return contact;
   } catch (err) {
     throw new Error('Error fetching contact by ID: ' + err.message);
@@ -29,45 +66,50 @@ export const addContact = async (data) => {
   }
 };
 
-export const updateContact = async (contactId, body) => {
-  try {
-    const updatedContact = await Contact.findByIdAndUpdate(contactId, body, {
-      new: true, 
-    });
 
+export const updateContact = async (contactId, userId, updateData) => {
+  try {
+    const updatedContact = await Contact.findOneAndUpdate(
+      { _id: contactId, userId },
+      updateData,
+      { new: true }
+    );
     return updatedContact;
   } catch (err) {
     throw new Error('Error updating contact: ' + err.message);
   }
 };
 
-export const deleteContact = async (contactId) => {
+
+export const deleteContact = async (contactId, userId) => {
   try {
-    const deletedContact = await Contact.findByIdAndDelete(contactId);
+    const deletedContact = await Contact.findOneAndDelete({ _id: contactId, userId });
     return deletedContact;
   } catch (err) {
     throw new Error('Error deleting contact: ' + err.message);
   }
 };
 
-export const getAllContactsPaginated = async ({
+
+export const getContactsPaginated = async ({
+  userId,
   page = 1,
   perPage = 10,
-  sortBy = "name",
-  sortOrder = "asc",
-  type,
-  isFavourite
+  sortBy = 'name',
+  sortOrder = 'asc',
+  contactType,
+  isFavourite,
 }) => {
   try {
-    const filter = {};
-    if (type) filter.contactType = type;
-    if (isFavourite !== undefined) filter.isFavourite = isFavourite === 'true';
+    const filter = { userId };
+    if (contactType) filter.contactType = contactType;
+    if (typeof isFavourite !== 'undefined') filter.isFavourite = isFavourite === 'true' || isFavourite === true;
 
     const totalItems = await Contact.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
 
     const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
     const contacts = await Contact.find(filter)
       .sort(sortOptions)
@@ -84,6 +126,6 @@ export const getAllContactsPaginated = async ({
       hasNextPage: page < totalPages,
     };
   } catch (err) {
-    throw new Error("Error fetching contacts: " + err.message);
+    throw new Error('Error fetching paginated contacts: ' + err.message);
   }
 };
