@@ -1,5 +1,5 @@
 import Contact from '../models/contact.js';
-
+import createHttpError from 'http-errors';
 
 export const getAllContactsPaginated = async ({
   userId, 
@@ -67,17 +67,17 @@ export const addContact = async (data) => {
 };
 
 
-export const updateContact = async (contactId, userId, updateData) => {
-  try {
-    const updatedContact = await Contact.findOneAndUpdate(
-      { _id: contactId, userId },
-      updateData,
-      { new: true }
-    );
-    return updatedContact;
-  } catch (err) {
-    throw new Error('Error updating contact: ' + err.message);
+export const updateContact = async ({ userId, contactId, data, file }) => {
+  if (file) {
+    const uploaded = await cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+      if (error) throw createHttpError(500, "Failed to upload image.");
+      data.photo = result.secure_url;
+    }).end(file.buffer);
   }
+
+  const doc = await Contact.findOneAndUpdate({ _id: contactId, userId }, data, { new: true });
+  if (!doc) throw createHttpError(404, 'Not found');
+  return doc;
 };
 
 
@@ -129,3 +129,16 @@ export const getContactsPaginated = async ({
     throw new Error('Error fetching paginated contacts: ' + err.message);
   }
 };
+
+export const createContact = async ({ userId, data, file }) => {
+  if (file) {
+    const uploaded = await cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+      if (error) throw createHttpError(500, "Failed to upload image.");
+      data.photo = result.secure_url;
+    }).end(file.buffer);
+  }
+
+  const doc = await Contact.create({ ...data, userId });
+  return doc;
+};
+

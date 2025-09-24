@@ -1,17 +1,15 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export const contactCreateSchema = Joi.object({
-  name: Joi.string().min(3).max(20).required(),
-  phoneNumber: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email().optional(),
-  isFavourite: Joi.boolean().optional(),
-  contactType: Joi.string().min(3).max(20).required(),
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  phoneNumber: Joi.string().required(),  
+  photo: Joi.string().optional(),
 });
 
 export const contactUpdateSchema = Joi.object({
-  name: Joi.string().min(3).max(20).optional(),
-  phoneNumber: Joi.string().min(3).max(20).optional(),
+  name: Joi.string().optional(),
   email: Joi.string().email().optional(),
-  isFavourite: Joi.boolean().optional(),
-  contactType: Joi.string().min(3).max(20).optional(),
-}).min(1); // en az bir alan olmalı
+  phoneNumber: Joi.string().optional(),
+  photo: Joi.string().optional(),
+});

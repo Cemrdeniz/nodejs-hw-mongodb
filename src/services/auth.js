@@ -3,6 +3,7 @@ import createHttpError from 'http-errors';
 import bcrypt from 'bcryptjs';
 import Session from '../models/session.js';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 
 const register = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
@@ -112,8 +113,71 @@ const login = async (req, res) => {
 
   return accessToken;
 };
+export const sendResetPasswordEmail = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) throw createHttpError(404, "User not found!");
+
+  // 5 dakikalık JWT token
+  const token = jwt.sign(
+    { email: user.email, id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: '5m' }
+  );
+
+  const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
+
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: user.email,
+      subject: 'Reset your password',
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link is valid for 5 minutes.</p>`,
+    });
+
+    console.log("Mail gönderildi, response:", info);
+
+    // **Token ve reset linkini geri döndür**
+    return { token, resetLink };
+
+  } catch (err) {
+    console.error("Mail gönderilemedi:", err);
+    throw createHttpError(500, "Failed to send the email, please try again later.");
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw createHttpError(401, "Token is expired or invalid.");
+  }
+
+  const user = await User.findOne({ email: payload.email });
+  if (!user) throw createHttpError(404, "User not found!");
+
+  // Şifreyi hashle
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  await user.save();
+
+  // Kullanıcının tüm mevcut oturumlarını sil
+  await Session.deleteMany({ userId: user._id });
+};
 export default {
   register,
+  resetPassword,
+  sendResetPasswordEmail,
   login,
   refresh
 };

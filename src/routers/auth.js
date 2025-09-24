@@ -1,8 +1,15 @@
 import express from 'express';
 import authController from '../controllers/auth.js';
+import  sendResetEmail  from '../controllers/auth.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { sendResetEmailSchema } from '../schemas/auth.js';
+import  resetPassword  from '../controllers/auth.js';
+import { resetPasswordSchema } from '../schemas/auth.js';
 
 const router = express.Router();
 
+router.post('/send-reset-email', authController.sendResetEmail);
+router.post('/reset-password', authController.resetPassword);
 router.post('/register', authController.registerUser);
 router.post('/login', authController.loginUser);
 router.post('/refresh', authController.refreshSession);

@@ -13,7 +13,7 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   try {
-    const result = await authService.login(req, res); // req ve res gerekiyor çünkü cookie set edilecek
+    const result = await authService.login(req, res); 
     res.status(200).json({
       status: 'success',
       message: 'Successfully logged in an user!',
@@ -35,20 +35,20 @@ const refreshSession = async (req, res, next) => {
     next(error);
   }
 };
-export const logoutUser = async (req, res, next) => {
+const logoutUser = async (req, res, next) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
       throw createHttpError(401, 'Refresh token not found in cookies');
     }
 
-    // Oturumu sil (refreshToken ile eşleşen)
+    
     await Session.deleteOne({ refreshToken });
 
-    // Refresh token çerezi temizle
+   
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // üretim ortamıysa secure olsun
+      secure: process.env.NODE_ENV === 'production', 
       sameSite: 'strict',
       path: '/',
     });
@@ -58,8 +58,39 @@ export const logoutUser = async (req, res, next) => {
     next(error);
   }
 };
+const sendResetEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.sendResetPasswordEmail(email);
+
+    res.status(200).json({
+      status: 200,
+      message: "Reset password email has been successfully sent.",
+      data: result 
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    await authService.resetPassword(token, password);
+
+    res.status(200).json({
+      status: 200,
+      message: "Password has been successfully reset.",
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 export default {
   registerUser,
+  resetPassword,
+  sendResetEmail,
   loginUser,
   refreshSession,
   logoutUser

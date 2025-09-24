@@ -1,5 +1,6 @@
 import Contact from '../models/contact.js';
 import createError from "http-errors";
+
 import * as contactsService from "../services/contacts.js";
 export const fetchContacts = async (req, res, next) => {
   try {
@@ -12,10 +13,10 @@ export const fetchContacts = async (req, res, next) => {
       isFavourite
     } = req.query;
 
-    const userId = req.user._id; // <<< Token'dan gelen kullanıcı ID
+    const userId = req.user._id; 
 
     const result = await contactsService.getAllContactsPaginated({
-      userId, // <<< Bunu ekle
+      userId, 
       page: parseInt(page),
       perPage: parseInt(perPage),
       sortBy,
@@ -39,13 +40,13 @@ export const fetchContacts = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    const userId = req.user._id;  // authenticate middleware sayesinde req.user var
+    const userId = req.user._id;  
     const contactData = {
       ...req.body,
-      userId,  // kullanıcı id'sini ekliyoruz
+      userId,  
     };
 
-    const newContact = await Contact.create(contactData);  // Burada Contact modelini kullanıyoruz
+    const newContact = await Contact.create(contactData);  
 
     res.status(201).json({
       status: 'success',
@@ -83,23 +84,32 @@ export const fetchContactById = async (req, res, next) => {
 
 export const patchContact = async (req, res, next) => {
   try {
-    const userId = req.user._id;
     const { contactId } = req.params;
-    const body = req.body;
+    const { body, file } = req;
 
-    const updatedContact = await contactsService.updateContact(contactId, userId, body);
+    if (file) {
+      const photoUrl = await uploadToCloudinary(file);
+      body.photo = photoUrl;
+    }
+
+
+    const updatedContact = await Contact.findOneAndUpdate(
+      { _id: contactId, userId: req.user._id },
+      body,
+      { new: true }
+    );
 
     if (!updatedContact) {
-      throw createError(404, "Contact not found");
+      throw createHttpError(404, 'Contact not found');
     }
 
     res.status(200).json({
-      status: 200,
-      message: "Successfully updated the contact!",
+      status: 'success',
+      message: 'Contact updated successfully',
       data: updatedContact,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

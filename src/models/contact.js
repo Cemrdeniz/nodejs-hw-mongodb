@@ -2,9 +2,12 @@ import mongoose from 'mongoose';
 
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
   email: { type: String },
-  password: { type: String },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },  // Burayı ekledik
+  isFavourite: { type: Boolean, default: false },
+  contactType: { type: String },
+  photo: { type: String }, // <--- fotoğraf alanı
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
 const Contact = mongoose.model('Contact', contactSchema);
