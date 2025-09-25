@@ -2,8 +2,7 @@ import express from 'express';
 import authController from '../controllers/auth.js';
 import  sendResetEmail  from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { sendResetEmailSchema,loginUserSchema,registerUserSchema,resetPasswordSchema
- } from '../schemas/auth.js';
+import { sendResetEmailSchema,loginUserSchema,registerUserSchema} from '../schemas/auth.js';
 import  resetPassword  from '../controllers/auth.js';
 import { resetPasswordSchema } from '../schemas/auth.js';
 
