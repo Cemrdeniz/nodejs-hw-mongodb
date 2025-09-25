@@ -1,7 +1,7 @@
 import authService from '../services/auth.js';
 import Session from '../models/session.js';
 import createHttpError from 'http-errors';
-const registerUser = async (req, res, next) => {
+export const registerUser = async (req, res, next) => {
   const result = await authService.register(req.body);
   res.status(201).json({
     status: 'success',
@@ -11,7 +11,7 @@ const registerUser = async (req, res, next) => {
 };
 
 
-const loginUser = async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
   try {
     const result = await authService.login(req, res); // req ve res gerekiyor çünkü cookie set edilecek
     res.status(200).json({
@@ -23,7 +23,7 @@ const loginUser = async (req, res, next) => {
     next(error);
   }
 };
-const refreshSession = async (req, res, next) => {
+export const refreshSession = async (req, res, next) => {
   try {
     const newAccessToken = await authService.refresh(req, res);
     res.status(200).json({
@@ -57,10 +57,4 @@ export const logoutUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-export default {
-  registerUser,
-  loginUser,
-  refreshSession,
-  logoutUser
 };
