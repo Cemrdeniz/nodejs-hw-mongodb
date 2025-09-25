@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization || '';
-    console.log("Authorization header:", authHeader);  // <--- burada kontrol et
+     
 
     const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
@@ -12,9 +12,9 @@ const authenticate = (req, res, next) => {
       throw createHttpError(401, 'Access token missing');
     }
 
-    // token'ı decode et ve kontrol et
+   
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log("Decoded token:", decoded);  // <--- burada da kontrol et
+    console.log("Decoded token:", decoded);  
 
     req.user = { _id: decoded.userId };
 
