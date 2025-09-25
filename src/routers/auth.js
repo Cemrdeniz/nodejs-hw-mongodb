@@ -6,7 +6,7 @@ import { registerUserSchema, loginUserSchema } from '../schemas/authschemas.js';
 const router = express.Router();
 
 router.post('/register', validateBody(registerUserSchema), authController.registerUser);
-router.post('/login', validateBody(loginUserSchema), authController.loginUser);
+router.post('/login', validateBody(loginUserSchema), loginUser);
 router.post('/refresh', authController.refreshSession);
 router.post('/logout', authController.logoutUser);
 
