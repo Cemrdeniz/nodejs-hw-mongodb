@@ -15,10 +15,13 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
-  },
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node src/index.js",
+  "dev": "nodemon src/index.js",
+  "build": "npm run build-docs",
+  "build-docs": "redocly build-docs docs/openapi.yaml -o docs/index.html",
+  "preview-docs": "redocly preview"
+},
   "keywords": [],
   "devDependencies": {
     "eslint": "^9.36.0",
@@ -37,6 +40,8 @@
     "mongoose": "^8.18.1",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.6",
-    "pino-http": "^10.5.0"
+    "pino-http": "^10.5.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   }
 }

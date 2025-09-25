@@ -44,3 +44,5 @@ Ardından package.json dosyasına aşağıdaki script eklenmiştir:
 
 Bu sayede, terminalde npm run dev komutu ile sunucu otomatik izleme (hot reload) ile başlatılabilmektedir.
 npm install express cors pino-http dotenv
+//npm install swagger-ui-express yamljs --save
+//npm install --save-dev @redocly/cli

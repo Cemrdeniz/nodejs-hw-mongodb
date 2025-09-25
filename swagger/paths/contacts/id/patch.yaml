@@ -1,0 +1,39 @@
+tags:
+  - Contacts
+summary: İletişim güncelle
+description: Mevcut bir iletişimin bilgilerini günceller.
+operationId: updateContact
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema:
+      type: string
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          phone:
+            type: string
+          photo:
+            type: string
+responses:
+  '200':
+    description: İletişim başarıyla güncellendi
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/Contact.yaml'
+  '404':
+    description: İletişim bulunamadı
+  '401':
+    description: Unauthorized

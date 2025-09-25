@@ -1,0 +1,33 @@
+tags:
+  - Contacts
+summary: Tüm iletişimleri getirir
+description: Sistemdeki tüm iletişimleri listeler.
+operationId: getAllContacts
+security:
+  - bearerAuth: []
+parameters:
+  - name: sortBy
+    in: query
+    description: Sıralama alanı (name, email, phone)
+    required: false
+    schema:
+      type: string
+      enum: [name, email, phone]
+  - name: sortOrder
+    in: query
+    description: Sıralama düzeni (asc veya desc)
+    required: false
+    schema:
+      type: string
+      enum: [asc, desc]
+responses:
+  '200':
+    description: Başarılı yanıt, iletişim listesi
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/Contact.yaml'
+  '401':
+    description: Unauthorized

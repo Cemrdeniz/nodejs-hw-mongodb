@@ -1,0 +1,25 @@
+tags:
+  - Contacts
+summary: ID ile iletişim getirir
+description: Verilen ID ile iletişim bilgisini getirir.
+operationId: getContactById
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema:
+      type: string
+responses:
+  '200':
+    description: Başarılı yanıt
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/Contact.yaml'
+          
+  '404':
+    description: İletişim bulunamadı
+  '401':
+    description: Unauthorized

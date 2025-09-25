@@ -1,0 +1,16 @@
+type: object
+properties:
+  _id:
+    type: string
+  name:
+    type: string
+  email:
+    type: string
+  phone:
+    type: string
+  photo:
+    type: string
+required:
+  - name
+  - email
+  - phone

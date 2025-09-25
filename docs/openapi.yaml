@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts API
+  description: Kullanıcı ve iletişim yönetimi API'si
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+tags:
+  - name: Auth
+  - name: Contacts
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  - url: https://<yayınlanan-site>
+    description: Production server
+
+paths:
+  /contacts:
+    get:
+      $ref: '../swagger/paths/contacts/get.yaml'
+    post:
+      $ref: '../swagger/paths/contacts/post.yaml'
+
+  /contacts/{contactId}:
+    get:
+      $ref: '../swagger/paths/contacts/id/get.yaml'
+    patch:
+      $ref: '../swagger/paths/contacts/id/patch.yaml'
+    delete:
+      $ref: '../swagger/paths/contacts/id/delete.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      $ref: '../swagger/components/schemas/User.yaml'
+    Contact:
+      $ref: '../swagger/components/schemas/Contact.yaml'
+    Auth:
+      $ref: '../swagger/components/schemas/Auth.yaml'

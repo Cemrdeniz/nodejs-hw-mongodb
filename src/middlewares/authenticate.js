@@ -31,6 +31,5 @@ const authenticate = (req, res, next) => {
   }
 };
 
-console.log("ACCESS_TOKEN_SECRET length:", process.env.ACCESS_TOKEN_SECRET?.length);
 
 export default authenticate;

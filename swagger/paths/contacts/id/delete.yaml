@@ -1,0 +1,20 @@
+tags:
+  - Contacts
+summary: İletişim sil
+description: Verilen ID’ye sahip iletişimi siler.
+operationId: deleteContact
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema:
+      type: string
+responses:
+  '204':
+    description: Başarılı silme
+  '404':
+    description: İletişim bulunamadı
+  '401':
+    description: Unauthorized

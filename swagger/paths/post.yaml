@@ -1,0 +1,22 @@
+tags:
+  - Contacts
+summary: Yeni iletişim oluştur
+description: Sisteme yeni bir iletişim ekler.
+operationId: createContact
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '../../components/schemas/Contact.yaml'
+responses:
+  '201':
+    description: İletişim başarıyla oluşturuldu
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/Contact.yaml'
+  '401':
+    description: Unauthorized
