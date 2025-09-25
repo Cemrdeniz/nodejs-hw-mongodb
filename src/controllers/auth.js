@@ -60,8 +60,6 @@ export const logoutUser = async (req, res, next) => {
 };
 export default {
   registerUser,
-  resetPassword,
-  sendResetEmail,
   loginUser,
   refreshSession,
   logoutUser
